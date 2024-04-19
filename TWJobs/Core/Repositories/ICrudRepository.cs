@@ -1,11 +1,11 @@
 ﻿namespace TWJobs.Core.Repositories;
 
-public interface ICrudRepository<Model, Id>
+public interface ICrudRepository<TModel, in TId>
 {
-    bool ExistsById(Id id);
-    ICollection<Model> FindAll();
-    Model Create(Model model);
-    Model? FindById(Id id);
-    Model Update(Model model);
-    void DeleteById(Id id);
+    bool ExistsById(TId id);
+    ICollection<TModel> FindAll();
+    TModel Create(TModel model);
+    TModel? FindById(TId id);
+    TModel Update(TModel model);
+    void DeleteById(TId id);
 }

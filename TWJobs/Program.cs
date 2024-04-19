@@ -1,6 +1,4 @@
 using TWJobs.Core.Config;
-using TWJobs.Core.Data.Contexts;
-using TWJobs.Core.Repositories.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,11 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.RegisterDatabase();
 builder.Services.RegisterRepository();
 builder.Services.RegisterServices();
+builder.Services.RegisterMappers();
+builder.Services.RegisterJobRequestValidator();
+builder.Services.RegisterAssembler(); 
+builder.Services.RegisterDocumentation();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -28,5 +30,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.RegisterMiddlewares();
 
 app.Run();

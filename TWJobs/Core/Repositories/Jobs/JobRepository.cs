@@ -5,57 +5,57 @@ using TWJobs.Core.Models;
 
 namespace TWJobs.Core.Repositories.Jobs
 {
-    public class JobRepository : IJobRepository
+    public class JobRepository(TWJobsDbContext context) : IJobRepository
     {
-        private readonly TWJobsDbContext _context;
-
-        public JobRepository(TWJobsDbContext context)
-        {
-            _context = context;
-        }
-
         public Job Create(Job model)
         {
-            _context.Jobs.Add(model);
-            _context.SaveChanges();
+            context.Jobs.Add(model);
+            context.SaveChanges();
 
             return model;
         }
         public Job Update(Job model)
         {
-            _context.Jobs.Update(model);
-            _context.SaveChanges();
+            context.Jobs.Update(model);
+            context.SaveChanges();
 
             return model;
         }
 
         public void DeleteById(int id)
         {
-            var job = _context.Jobs.Find(id);
-            if(job != null)
-            {
-                _context.Jobs.Remove(job);
-                _context.SaveChanges();
-            }
+            var job = context.Jobs.Find(id);
+            if (job == null) return;
+            context.Jobs.Remove(job);
+            context.SaveChanges();
         }
 
         public bool ExistsById(int id)
         {
-            bool result = _context.Jobs.Any(x => x.Id == id);
+            var result = context.Jobs.Any(x => x.Id == id);
             return result;
         }
 
         public ICollection<Job> FindAll()
         {
-            var result = _context.Jobs.AsNoTracking().ToList();
+            var result = context.Jobs.AsNoTracking().ToList();
             return result;
         }
 
         public Job? FindById(int id)
         {           
-            var result = _context.Jobs.AsNoTracking().FirstOrDefault(x => x.Id == id);
+            var result = context.Jobs.AsNoTracking().FirstOrDefault(x => x.Id == id);
             return result;           
         }
 
+        public PagedResult<Job> FindAll(PaginationOption options)
+        {
+            var totalElements = context.Jobs.Count();
+            var items = context.Jobs
+                .Skip((options.PageNumber - 1) * options.PageSize)
+                .Take(options.PageSize)
+                .ToList();
+            return new PagedResult<Job>(items, options.PageNumber, options.PageSize, totalElements);
+        }
     }
 }
